@@ -30,7 +30,7 @@ export default class Song {
 		})
 	}
 }
-
+// 将得到的数据转换成song的一个实例
 export function createSong(musicData) {
 	return new Song({
 		id: musicData.songid,

@@ -14,7 +14,7 @@
     	<div class="recommend-list">
     		<h1 class="list-title">热门歌单推荐</h1>
     		<ul>
-    			<li v-for="item in discList" class="item">
+    			<li v-for="item in discList" class="item" @click="selectItem(item)">
     				<div class="icon">
     					<img v-lazy="item.imgurl" width="60" height="60" >
     				</div>
@@ -41,6 +41,7 @@ import Slider from 'base/slider/slider'
 import {getRecommend, getDiscList} from 'api/recommend.js'
 import {ERR_OK} from 'api/config'
 import {playListMixin} from 'common/js/mixin'
+import {mapMutations} from 'vuex'
 export default {
 	mixins: [playListMixin],
 	data() {
@@ -84,7 +85,19 @@ export default {
 				this.$refs.scroll.refresh()
 				this.checkLoaded = true
 			}
-		}
+		},
+		// 点击推荐页热门歌单的任意一行
+		selectItem(item) {
+			this.$router.push({
+				// item.dissid歌单的id
+				path: `/recommend/${item.dissid}`
+			})
+			// 把disc写到store里，也就更改了state里的disc 在disc.vuex里就可以接收这个disc的数据
+			this.setDisc(item)
+		},
+		...mapMutations({
+			setDisc: 'SET_DISC'
+		})
 	},
   components: {
     Slider,
