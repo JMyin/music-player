@@ -17,7 +17,8 @@ const state = {
 	// 一个歌单对象
 	disc: {},
 	// 排行榜列表
-	topList: {}
+	topList: {},
+	searchHistory: []
 }
 
 export default state

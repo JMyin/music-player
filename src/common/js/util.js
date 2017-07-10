@@ -15,4 +15,15 @@ export function shuffle(arr) {
 	}
 	return _arr
 }
-
+// 函数截流 当func为多次出发时，在一定的时间内 只会执行一次
+export function debounce(func, delay) {
+	let timer
+	return function(...args) {
+		if (timer) {
+			clearTimeout(timer)
+		}
+		timer = setTimeout(() => {
+			func.apply(this, args)
+		}, delay)
+	}
+}

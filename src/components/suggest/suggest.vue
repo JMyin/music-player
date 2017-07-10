@@ -1,5 +1,5 @@
 <template>
-	<scroll class="suggest" :data="result" :pullup="pullup" @scrollToEnd="searchMore" ref="suggest">
+	<scroll class="suggest" :data="result" :pullup="pullup" @scrollToEnd="searchMore" :beforeScroll="beforeScroll" @beforeScroll="listScroll" ref="suggest">
 		<ul class="suggest-list">
 			<li class="suggest-item" v-for="item in result" @click="selectItem(item)">
 				<div class="icon">
@@ -11,6 +11,9 @@
 			</li>
 			<loading v-show="hasMore"></loading>
 		</ul>
+		<div v-show="!hasMore && !result.length" class="no-result-wrapper">
+			<no-result title="抱歉，暂无搜索数据"></no-result>
+		</div>
 	</scroll>
 </template>
 
@@ -21,7 +24,8 @@ import {createSong} from 'common/js/song'
 import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
 import Singer from 'common/js/singer'
-import {mapMutations} from 'vuex'
+import {mapMutations, mapActions} from 'vuex'
+import NoResult from 'base/no-result/no-result'
 
 const TYPE_SINGER = 'singer'
 // 每页显示多少个
@@ -47,7 +51,8 @@ export default {
 			result: [],
 			// 上拉刷新
 			pullup: true,
-			hasMore: true
+			hasMore: true,
+			beforeScroll: true
 		}
 	},
 	methods: {
@@ -116,18 +121,31 @@ export default {
 			}
 		},
 		selectItem(item) {
-			const singer = new Singer({
-				id: item.singermid,
-				name: item.singername
-			})
-			this.$router.push({
-				path: `/search/${singer.id}`
-			})
-			this.setSinger(singer)
+			// 如果选择的是歌手 就进入歌手的歌曲列表页
+			if (item.type === TYPE_SINGER) {
+				const singer = new Singer({
+					id: item.singermid,
+					name: item.singername
+				})
+				this.$router.push({
+					path: `/search/${singer.id}`
+				})
+				this.setSinger(singer)
+			} else {
+				// 如果选择的是歌曲，就将歌曲插入现在的播放列表中 调用insertSong实际上就触发了
+				// mapActions  就提交了action 然后修改playList 、sequenceList、currentIndex
+				this.insertSong(item)
+			}
+		},
+		listScroll() {
+			this.$emit('listScroll')
 		},
 		...mapMutations({
 			setSinger: 'SET_SINGER'
-		})
+		}),
+		...mapActions([
+			'insertSong'
+		])
 	},
 	watch: {
 		query(newQuery) {
@@ -136,7 +154,8 @@ export default {
 	},
 	components: {
 		Scroll,
-		Loading
+		Loading,
+		NoResult
 	}
 }
 
@@ -167,5 +186,10 @@ export default {
 			overflow: hidden
 			.text
 				no-wrap()
+	.no-result-wrapper
+		position: absolute
+		width: 100%
+		top: 50%
+		transform: translateY(-50%)
 
 </style>

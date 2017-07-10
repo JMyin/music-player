@@ -33,6 +33,10 @@ export default {
 		pullup: {
 			type: Boolean,
 			default: false
+		},
+		beforeScroll: {
+			type: Boolean,
+			default: false
 		}
 	},
 	// 当DOmready后
@@ -68,6 +72,11 @@ export default {
 						// scrollEnd表示滚动停止了,scrollToEnd表示滚动到底部了
 						this.$emit('scrollToEnd')
 					}
+				})
+			}
+			if (this.beforeScroll) {
+				this.scroll.on('beforeScrollStart', () => {
+					this.$emit('beforeScroll')
 				})
 			}
 		},
