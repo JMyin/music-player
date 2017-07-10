@@ -1,3 +1,4 @@
+<!-- 可复用的音乐背景图+列表页面 -->
 <template>
 	<div class="music-list">
 		<div class="back" @click="back">
@@ -16,7 +17,7 @@
 		<div class="bg-layer" ref="layer"></div>
 		<scroll @scroll="scroll" :data="songs" :probe-type="probeType" :listen-scroll="listenScroll" class="list" ref="list">
 			<div class="song-list-wrapper">
-				<song-list :songs="songs" @select="selectItem"></song-list>
+				<song-list :songs="songs" :rank="rank" @select="selectItem"></song-list>
 			</div>
 			<div v-show="!songs.length" class="loading-container">
 				<loading></loading>
@@ -52,6 +53,10 @@ export default {
 		title: {
 			type: String,
 			default: ''
+		},
+		rank: {
+			type: Boolean,
+			default: false
 		}
 	},
 	data() {

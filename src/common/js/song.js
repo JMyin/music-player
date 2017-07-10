@@ -44,7 +44,7 @@ export function createSong(musicData) {
 	})
 }
 // singer是一个数组 而需要的是一个字符串
-function filterSinger(singer) {
+export function filterSinger(singer) {
 	let ret = []
 	if (!singer) {
 		return ''

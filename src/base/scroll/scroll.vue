@@ -29,6 +29,10 @@ export default {
 		listenScroll: {
 			type: Boolean,
 			default: false
+		},
+		pullup: {
+			type: Boolean,
+			default: false
 		}
 	},
 	// 当DOmready后
@@ -55,6 +59,15 @@ export default {
 				// better-scroll的this在这里默认是指向scroll的
 				this.scroll.on('scroll', (pos) => {
 					that.$emit('scroll', pos)
+				})
+			}
+			// 监听上拉刷新，在滚动结束的时候会派发一个scrollEnd事件
+			if (this.pullup) {
+				this.scroll.on('scrollEnd', () => {
+					if (this.scroll.y <= this.scroll.maxScrollY + 50) {
+						// scrollEnd表示滚动停止了,scrollToEnd表示滚动到底部了
+						this.$emit('scrollToEnd')
+					}
 				})
 			}
 		},

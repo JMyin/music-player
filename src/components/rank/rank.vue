@@ -1,8 +1,9 @@
+<!-- 排行页面 -->
 <template>
   	<div class="rank" ref="rank">
 		<scroll class="top-list" :data="topList" ref="topList">
 			<ul>
-				<li class="item" v-for="item in topList">
+				<li class="item" v-for="item in topList" @click="selectItem(item)">
 					<div class="icon">
 						<img v-lazy="item.picUrl" alt="" width="100" height="100">
 					</div>
@@ -28,6 +29,7 @@ import {ERR_OK} from 'api/config'
 import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
 import {playListMixin} from 'common/js/mixin'
+import {mapMutations} from 'vuex'
 export default {
 	mixins: [playListMixin],
 	data() {
@@ -51,7 +53,19 @@ export default {
 				}
 			})
 
-		}
+		},
+		// 点击排行榜页面的任意行然后跳转到子(路由)页面
+		selectItem(item) {
+			this.$router.push({
+				path: `/rank/${item.id}`
+			})
+			// 类似于函数 传入函数的item就县对应到vuex里的topList 这样就把topList写到vuex的数据里了
+			// 可以在别的组件通过mapGeeters拿到
+			this.setTopList(item)
+		},
+		...mapMutations({
+			setTopList: 'SET_TOP_LIST'
+		})
 	},
   components: {
   	Scroll,
