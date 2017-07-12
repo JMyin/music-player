@@ -136,6 +136,8 @@ export default {
 				// mapActions  就提交了action 然后修改playList 、sequenceList、currentIndex
 				this.insertSong(item)
 			}
+			// 向父组件派发select事件，告诉父组件保存选择的这个item，存储在searchHistory
+			this.$emit('select')
 		},
 		listScroll() {
 			this.$emit('listScroll')

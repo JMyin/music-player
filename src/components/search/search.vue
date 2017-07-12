@@ -13,10 +13,19 @@
     				</li>
     			</ul>
     		</div>
+    		<div class="search-history" v-show="searchHistory.length">
+    		<h1 class="title">
+	    		<span class="text">搜索历史</span>
+	    		<span class="clear">
+	    			<i class="icon-clear"></i>
+	    		</span>
+    		</h1>
+    		<search-list :searches="searchHistory"></search-list>
+    		</div>
     	</div>
     </div>
     <div class="search-result" v-show="query">
-    	<suggest :query="query" @listScroll="blurInput"></suggest>
+    	<suggest :query="query" @listScroll="blurInput" @select="saveSearch"></suggest>
     </div>
     <router-view></router-view>
   </div>
@@ -27,6 +36,8 @@ import SearchBox from 'base/search-box/search-box'
 import {getHotKey} from 'api/search'
 import {ERR_OK} from 'api/config'
 import Suggest from 'components/suggest/suggest'
+import SearchList from 'base/search-list/search-list'
+import {mapActions, mapGetters} from 'vuex'
 export default {
 	data() {
 		return {
@@ -36,6 +47,11 @@ export default {
 	},
 	created() {
 		this._getHotKey()
+	},
+	computed: {
+		...mapGetters([
+			'searchHistory'
+		])
 	},
 	methods: {
 		_getHotKey() {
@@ -53,12 +69,19 @@ export default {
 		},
 		//  使输入框失去焦点->手机上的键盘可以消失
 		blurInput() {
-			this.$refs.searcBox.blur()
-		}
+			// this.$refs.searcBox.blur()
+		},
+		saveSearch() {
+			this.saveSearchHistory(this.query)
+		},
+		...mapActions([
+			'saveSearchHistory'
+		])
 	},
   components: {
    	SearchBox,
-   	Suggest
+   	Suggest,
+   	SearchList
   }
 }
 </script>
@@ -91,5 +114,22 @@ export default {
 					background: $color-highlight-background
 					font-size: $font-size-medium
 					color: $color-text-d
+			.search-history
+				position: relative
+				margin: 0 20px
+				.title
+					display: flex
+					align-items: center
+					height: 40px
+					font-size: $font-size-medium
+					color: $color-text-l
+					.text
+						flex: 1
+					.clear
+						extend-click()
+						.icon-clear
+							font-size: $font-size-medium
+							color: $color-text-d
+
 
 </style>

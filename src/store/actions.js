@@ -2,6 +2,7 @@
 import * as types from './mutation-type'
 import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/util'
+import {saveSearch} from 'common/js/cache'
 // 查找列表中有没有相应的歌曲，如果有返回索引
 function findIndex(list, song) {
 	return list.findIndex((item) => {
@@ -61,8 +62,8 @@ export const insertSong = function({commit, state}, song) {
 			playList.splice(fpIndex + 1, 1)
 		}
 	}
-// 在修改sequenceList之前，首先要找到歌曲要插入的sequenceList的位置
-// 找到当前歌曲currentSong在sequenceList里的位置索引 +1 就是要插入的位置
+	// 在修改sequenceList之前，首先要找到歌曲要插入的sequenceList的位置
+	// 找到当前歌曲currentSong在sequenceList里的位置索引 +1 就是要插入的位置
 	let currentSIndex = findIndex(sequenceList, currentSong) + 1
 	// 然后在查一下之前的sequenceList有没有包含要插入的项
 	let fsIndex = findIndex(sequenceList, song)
@@ -86,4 +87,39 @@ export const insertSong = function({commit, state}, song) {
 	commit(types.SET_CURRENT_INDEX, currentIndex)
 	commit(types.SET_FULL_SCREEN, true)
 	commit(types.SET_PLAYING_STATE, true)
+}
+
+export const saveSearchHistory = function({commit}, query) {
+	commit(types.SET_SEARCH_HISTORY, saveSearch(query))
+}
+// song表示要删除的歌曲
+export const deleteSong = function({commit, state}, song) {
+	let playList = state.playList.slice()
+	let sequenceList = state.sequenceList.slice()
+	let currentIndex = state.currentIndex
+	// 找到眼删除的歌曲song在playList里的索引 然后将其删除
+	let pIndex = findIndex(playList, song)
+	playList.splice(pIndex, 1)
+	// 同样也要找到song在sequenceList里的索引 然后删除
+	let sIndex = findIndex(sequenceList, song)
+	sequenceList.splice(sIndex, 1)
+	// ????
+	if (currentIndex > pIndex || currentIndex === playList.length) {
+		currentIndex--
+	}
+	commit(types.SET_PLAYLIST, playList)
+	commit(types.SET_SEQUENCE_LIST, sequenceList)
+	commit(types.SET_CURRENT_INDEX, currentIndex)
+
+	const playingState = playList.length > 0
+	// 当歌曲被删完了 需要将playingState设置为false
+	// 如果播放列表里还有歌曲，将播放状态设为true
+	commit(types.SET_PLAYING_STATE, playingState)
+}
+// 清空播放列表的action
+export const deleteSongList = function({commit}) {
+	commit(types.SET_PLAYLIST, [])
+	commit(types.SET_SEQUENCE_LIST, [])
+	commit(types.SET_CURRENT_INDEX, -1)
+	commit(types.SET_PLAYING_STATE, false)
 }

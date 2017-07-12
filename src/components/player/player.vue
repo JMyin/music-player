@@ -80,11 +80,12 @@
 					<i :class='miniIcon' class="icon-mini" @click.stop="togglePlaying"></i>
 				</progress-circle>
 			</div>
-			<div class="control">
+			<div class="control" @click.stop="showPlayList">
 				<i class="icon-playlist"></i>
 			</div>
 		</div>
 	</transition>
+	<play-list ref="playlist"></play-list>
 	<audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error" @timeupdate="updateTime" @ended="end"></audio>
 	</div>
 </template>
@@ -95,14 +96,17 @@ import animations from 'create-keyframe-animation'
 import {prefixStyle} from 'common/js/dom'
 import progressBar from 'base/progress-bar/progress-bar.vue'
 import ProgressCircle from 'base/progress-circle/progress-circle'
-import {playMode} from 'common/js/config'
-import {shuffle} from 'common/js/util'
 import Lyric from 'lyric-parser'
 import Scroll from 'base/scroll/scroll'
+import playList from 'components/playlist/playlist'
+import {playerMixin} from 'common/js/mixin'
+import {playMode} from 'common/js/config'
 
 const transform = prefixStyle('transform')
 const transitionDuration = prefixStyle('transitionDuration')
+
 export default {
+	mixins: [playerMixin],
 	data() {
 		return {
 			// 歌曲准备就绪（从加载到播放）标志位 为了避免这个错误：DOMException: The play() request was interrupted by a new load request.
@@ -129,10 +133,10 @@ export default {
 		miniIcon() {
 			return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
 		},
-		// 播放模式 3种
-		iconMode() {
-			return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
-		},
+		// // 播放模式 3种 放入mixin
+		// iconMode() {
+		// 	return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
+		// },
 		cdCls() {
 			return this.playing ? 'play' : 'play-pause'
 		},
@@ -147,12 +151,7 @@ export default {
 			'currentIndex',
 			// 决定是否显示
 			'fullScreen',
-			// 播放列表
-			'playList',
-			'currentSong',
-			'playing',
-			'mode',
-			'sequenceList'
+			'playing'
 		])
 	},
 	methods: {
@@ -326,28 +325,14 @@ export default {
 				this.currentLyric.seek(currentTime * 1000)
 			}
 		},
-		changeMode() {
-			// 改变播放模式
-			const mode = (this.mode + 1) % 3
-			this.setPlayMode(mode)
-			let list = null
-			if (mode === playMode.random) {
-				list = shuffle(this.sequenceList)
-			} else {
-				// 当为顺序或循环播放模式时
-				list = this.sequenceList
-			}
-			this.resetCurrentIndex(list)
-			this.setPlayList(list)
-		},
-		/** 当切换播放模式的时候，为了避免歌曲切换模式时播放的歌曲发生改变 将正在播放歌曲的id设置为切换之后播放的
-		当playList改变的时候，也让currentIndex改变 来保证currentSong的id不变**/
-		resetCurrentIndex(list) {
-			let index = list.findIndex((item) => {
-				return item.id === this.currentSong.id
-			})
-			this.setCurrentIndex(index)
-		},
+		// /** 当切换播放模式的时候，为了避免歌曲切换模式时播放的歌曲发生改变 将正在播放歌曲的id设置为切换之后播放的
+		// 当playList改变的时候，也让currentIndex改变 来保证currentSong的id不变**/ 在mixin里
+		// resetCurrentIndex(list) {
+		// 	let index = list.findIndex((item) => {
+		// 		return item.id === this.currentSong.id
+		// 	})
+		// 	this.setCurrentIndex(index)
+		// },
 		// 获取歌词
 		getLyric() {
 			this.currentSong.getLyric().then((lyric) => {
@@ -431,6 +416,10 @@ export default {
 			this.$refs.middleL.style.opacity = opacity
 			this.$refs.middleL.style[transitionDuration] = `${time}ms`
 		},
+		// 在歌曲播放页显示播放列表
+		showPlayList() {
+			this.$refs.playlist.show()
+		},
 		...mapMutations({
 			setFullScreen: 'SET_FULL_SCREEN',
 			setPlayingState: 'SET_PLAYING_STATE',
@@ -441,6 +430,9 @@ export default {
 	},
 	watch: {
 		currentSong(newSong, oldSong) {
+			if (!newSong.id) {
+				return
+			}
 			if (newSong.id === oldSong.id) {
 				return
 			}
@@ -465,7 +457,8 @@ export default {
 	components: {
 		progressBar,
 		ProgressCircle,
-		Scroll
+		Scroll,
+		playList
 	}
 }
 	
