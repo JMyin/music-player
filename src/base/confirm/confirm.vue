@@ -1,6 +1,7 @@
 <template>
 	<transition name="confirm-fade">
 		<div class="confirm" v-show="showFlag" @click.stop>
+		<!-- /* 中间内容定位 保证水平垂直居中 */ -->
 			<div class="confirm-wrapper">
 				<div class="confirm-content">
 					<p class="text">{{text}}</p>
@@ -91,12 +92,17 @@ export default {
 				align-items: center
 				text-align: center
 				font-size: $font-size-large
-/* 				.operate-btn
+ 				.operate-btn
 					flex: 1
 					line-height: 22px
 					padding: 10px 0
 					border-top: 1px solid $color-background-d
-            		color: $color-text-d
-            		&.left
-            			border-right: 1px solid $color-background-d */
+					color: $color-text-d
+					&.left
+						border-right: 1px solid $color-background-d
+/* @keyframes confirm-fadein
+    0%
+    	opacity: 0
+    100%
+    	opacity: 1 */
 </style>

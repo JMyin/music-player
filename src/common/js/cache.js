@@ -2,7 +2,7 @@
 * @Author: JMyin
 * @Date:   2017-07-11 10:58:49
 * @Last Modified by:   JMyin
-* @Last Modified time: 2017-07-11 12:06:29
+* @Last Modified time: 2017-07-13 22:12:09
 */
 import storage from 'good-storage'
 const SEARCH_KEY = '__search__'
@@ -38,4 +38,28 @@ function inserArray(arr, val, compare, maxLen) {
 
 export function loadSearch() {
 	return storage.get(SEARCH_KEY, [])
+}
+
+// 从数组中删除一个元素 compare是一个比较函数 返回TRUE的时候，就删除
+function deleteFromArray(arr, compare) {
+	const index = arr.findIndex(compare)
+	if (index > -1) {
+		arr.splice(index, 1)
+	}
+}
+// 将query从数组中删除 并且返回一个新的数组
+export function deleteSearch(query) {
+	// 获取缓存中的搜索记录列表，没有的话就设置为一个空数组
+	let searches = storage.get(SEARCH_KEY, [])
+	deleteFromArray(searches, (item) => {
+		return item === query
+	})
+	// 上面删除数组之后要再次保存数组
+	storage.set(SEARCH_KEY, searches)
+	return searches
+}
+// 清空搜索历史
+export function clearSearch() {
+	storage.remove(SEARCH_KEY)
+	return []
 }

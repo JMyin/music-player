@@ -2,7 +2,7 @@
 import * as types from './mutation-type'
 import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/util'
-import {saveSearch} from 'common/js/cache'
+import {saveSearch, deleteSearch, clearSearch} from 'common/js/cache'
 // 查找列表中有没有相应的歌曲，如果有返回索引
 function findIndex(list, song) {
 	return list.findIndex((item) => {
@@ -122,4 +122,13 @@ export const deleteSongList = function({commit}) {
 	commit(types.SET_SEQUENCE_LIST, [])
 	commit(types.SET_CURRENT_INDEX, -1)
 	commit(types.SET_PLAYING_STATE, false)
+}
+
+export const deleteSearchHistory = function({commit}, query) {
+	// 删除一条搜索记录 在增加一条 deleteSearch(query)删除了query 并范湖一个新的数组
+	// 将新数组提交给mutation
+	commit(types.SET_SEARCH_HISTORY, deleteSearch(query))
+}
+export const clearSearchHistory = function({commit}) {
+	commit(types.SET_SEARCH_HISTORY, clearSearch())
 }
