@@ -1,6 +1,6 @@
 import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/util'
-import {mapGetters, mapMutations} from 'vuex'
+import {mapGetters, mapMutations, mapActions} from 'vuex'
 
 export const playListMixin = {
 	computed: {
@@ -77,5 +77,37 @@ export const playerMixin = {
 			setPlayMode: 'SET_PLAY_MODE',
 			setPlayList: 'SET_PLAYLIST'
 		})
+	}
+}
+
+export const searchMixin = {
+	data() {
+		return {
+			query: ''
+		}
+	},
+	computed: {
+		...mapGetters([
+			'searchHistory'
+		])
+	},
+	methods: {
+		addQuery(query) {
+			this.$refs.searchBox.setQuery(query)
+		},
+		onQueryChange(query) {
+			this.query = query
+		},
+		saveSearch() {
+			this.saveSearchHistory(this.query)
+		},
+		//  使输入框失去焦点->手机上的键盘可以消失
+		blurInput() {
+			this.$refs.searchBox.blur()
+		},
+		...mapActions([
+			'saveSearchHistory',
+			'deleteSearchHistory'
+		])
 	}
 }

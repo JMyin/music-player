@@ -2,24 +2,27 @@
 * @Author: JMyin
 * @Date:   2017-07-11 10:58:49
 * @Last Modified by:   JMyin
-* @Last Modified time: 2017-07-13 22:12:09
+* @Last Modified time: 2017-07-15 21:25:23
 */
 import storage from 'good-storage'
 const SEARCH_KEY = '__search__'
 const SEARCH_MAX_LENGTH = 15
+// 播放记录信息  最多保存200个最近播放歌曲
+const PLAY_KEY = '__play__'
+const PLAY_MAX_LENGTH = 200
 
 // 存储搜索值
 export function saveSearch(query) {
 	// 首先获取当前的存储情况，如果没有 就设置为一个空数组
 	let searches = storage.get(SEARCH_KEY, [])
-	inserArray(searches, query, (item) => {
+	insertArray(searches, query, (item) => {
 		return item === query
 	}, SEARCH_MAX_LENGTH)
 	storage.set(SEARCH_KEY, searches)
 	return searches
 }
 
-function inserArray(arr, val, compare, maxLen) {
+function insertArray(arr, val, compare, maxLen) {
 	const index = arr.findIndex(compare)
 	// 如果所有为0 表示数组中已经有这条数据 并且是第一个 那就什么都不用做
 	if (index === 0) {
@@ -62,4 +65,18 @@ export function deleteSearch(query) {
 export function clearSearch() {
 	storage.remove(SEARCH_KEY)
 	return []
+}
+// 将歌曲song保存到本地
+export function savePlay(song) {
+	let songs = storage.get(PLAY_KEY, [])
+	insertArray(songs, song, (item) => {
+		return item.id === song.id
+	}, PLAY_MAX_LENGTH)
+	// 将新的数组缓存到本地
+	storage.set(PLAY_KEY, songs)
+	return songs
+}
+// 读取缓存中的历史歌曲数据
+export function loadPlay() {
+	return storage.get(PLAY_KEY, [])
 }

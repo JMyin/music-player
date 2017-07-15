@@ -42,14 +42,14 @@ import Suggest from 'components/suggest/suggest'
 import SearchList from 'base/search-list/search-list'
 import Confirm from 'base/confirm/confirm'
 import Scroll from 'base/scroll/scroll'
-import {mapActions, mapGetters} from 'vuex'
-import {playListMixin} from 'common/js/mixin'
+import {mapActions} from 'vuex'
+import {playListMixin, searchMixin} from 'common/js/mixin'
 export default {
-	mixins: [playListMixin],
+	mixins: [playListMixin, searchMixin],
 	data() {
 		return {
-			hotKey: [],
-			query: ''
+			hotKey: []
+			// query: ''
 		}
 	},
 	created() {
@@ -59,9 +59,10 @@ export default {
 		shortcut() {
 			return this.hotKey.concat(this.searchHistory)
 		},
-		...mapGetters([
-			'searchHistory'
-		])
+		// 封装在searchMixin里
+		// ...mapGetters([
+		// 	'searchHistory'
+		// ])
 	},
 	methods: {
 		_getHotKey() {
@@ -71,19 +72,20 @@ export default {
 				}
 			})
 		},
-		addQuery(query) {
-			this.$refs.searchBox.setQuery(query)
-		},
-		onQueryChange(query) {
-			this.query = query
-		},
-		//  使输入框失去焦点->手机上的键盘可以消失
-		blurInput() {
-			// this.$refs.searcBox.blur()
-		},
-		saveSearch() {
-			this.saveSearchHistory(this.query)
-		},
+		// 封装在searchMixin里
+		// addQuery(query) {
+		// 	this.$refs.searchBox.setQuery(query)
+		// },
+		// onQueryChange(query) {
+		// 	this.query = query
+		// },
+		// //  使输入框失去焦点->手机上的键盘可以消失
+		// blurInput() {
+		// 	this.$refs.searchBox.blur()
+		// },
+		// saveSearch() {
+		// 	this.saveSearchHistory(this.query)
+		// },
 		// 点击删除某一项搜索历史
 		deleteOne(item) {
 			this.deleteSearchHistory(item)
@@ -103,8 +105,8 @@ export default {
 			this.$refs.suggest.refresh()
 		},
 		...mapActions([
-			'saveSearchHistory',
-			'deleteSearchHistory',
+			// 'saveSearchHistory',
+			// 'deleteSearchHistory',
 			'clearSearchHistory'
 		])
 	},

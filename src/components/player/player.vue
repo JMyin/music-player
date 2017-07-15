@@ -91,7 +91,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import {mapGetters, mapMutations} from 'vuex'
+import {mapGetters, mapMutations, mapActions} from 'vuex'
 import animations from 'create-keyframe-animation'
 import {prefixStyle} from 'common/js/dom'
 import progressBar from 'base/progress-bar/progress-bar.vue'
@@ -285,6 +285,8 @@ export default {
 		ready() {
 			// 保证不会因为切换太快出现异常
 			this.songReady = true
+			// 将当前歌曲保存起来
+			this.savePlayHistory(this.currentSong)
 		},
 		// 歌曲加载失败时（无网络或下一首歌曲不存在）
 		error() {
@@ -426,7 +428,10 @@ export default {
 			setCurrentIndex: 'SET_CURRENT_INDEX',
 			setPlayMode: 'SET_PLAY_MODE',
 			setPlayList: 'SET_PLAYLIST'
-		})
+		}),
+		...mapActions([
+			'savePlayHistory'
+		])
 	},
 	watch: {
 		currentSong(newSong, oldSong) {

@@ -2,7 +2,7 @@
 import * as types from './mutation-type'
 import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/util'
-import {saveSearch, deleteSearch, clearSearch} from 'common/js/cache'
+import {saveSearch, deleteSearch, clearSearch, savePlay} from 'common/js/cache'
 // 查找列表中有没有相应的歌曲，如果有返回索引
 function findIndex(list, song) {
 	return list.findIndex((item) => {
@@ -131,4 +131,8 @@ export const deleteSearchHistory = function({commit}, query) {
 }
 export const clearSearchHistory = function({commit}) {
 	commit(types.SET_SEARCH_HISTORY, clearSearch())
+}
+// 将当前歌曲保存到playHistory列表及本地缓存里
+export const savePlayHistory = function({commit}, song) {
+	commit(types.SET_PLAY_HISTORY, savePlay(song))
 }
