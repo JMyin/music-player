@@ -77,7 +77,7 @@ export default {
 			this.page++
 			search(this.query, this.page, this.showSinger, perpage).then((res) => {
 				this.result = this.result.concat(this._getResult(res.data))
-				this._checkMore()
+				this._checkMore(res.data)
 			})
 		},
 		// 检查是否还有更多数据
@@ -141,6 +141,9 @@ export default {
 		},
 		listScroll() {
 			this.$emit('listScroll')
+		},
+		refresh() {
+			this.$refs.suggest.refresh()
 		},
 		...mapMutations({
 			setSinger: 'SET_SINGER'

@@ -3,7 +3,7 @@
     <div class="search-box-wrapper">
     	<search-box ref="searchBox" @query="onQueryChange"></search-box>
     </div>
-    <div class="shortcut-wrapper" v-show="!query">
+    <div ref="shortcutWrapper" class="shortcut-wrapper" v-show="!query">
     	<scroll class="shortcut" :data="shortcut" ref="shortcut">
 	    	<div>
 	    		<div class="hot-key">
@@ -26,8 +26,8 @@
 	    	</div>
     	</scroll>
     </div>
-    <div class="search-result" v-show="query">
-    	<suggest :query="query" @listScroll="blurInput" @select="saveSearch"></suggest>
+    <div ref="searchResult" class="search-result" v-show="query">
+    	<suggest :query="query" @listScroll="blurInput" @select="saveSearch" ref="suggest"></suggest>
     </div>
     <confirm @confirm="deleteAll" text="确定要清空搜索历史吗？" confirmBtnText="清空" ref="confirm"></confirm>
     <router-view></router-view>
@@ -43,7 +43,9 @@ import SearchList from 'base/search-list/search-list'
 import Confirm from 'base/confirm/confirm'
 import Scroll from 'base/scroll/scroll'
 import {mapActions, mapGetters} from 'vuex'
+import {playListMixin} from 'common/js/mixin'
 export default {
+	mixins: [playListMixin],
 	data() {
 		return {
 			hotKey: [],
@@ -92,6 +94,13 @@ export default {
 		},
 		showConfirm() {
 			this.$refs.confirm.show()
+		},
+		handlePlayList(playList) {
+			const bottom = playList.length > 0 ? '60px' : ''
+			this.$refs.shortcutWrapper.style.bottom = bottom
+			this.$refs.shortcut.refresh()
+			this.$refs.searchResult.style.bottom = bottom
+			this.$refs.suggest.refresh()
 		},
 		...mapActions([
 			'saveSearchHistory',
@@ -162,6 +171,11 @@ export default {
 						.icon-clear
 							font-size: $font-size-medium
 							color: $color-text-d
+	.search-result
+		position: fixed
+		width: 100%
+		top: 178px
+		bottom: 0
 
 
 </style>

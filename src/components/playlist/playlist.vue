@@ -157,7 +157,6 @@ export default {
 		position: absolute
 		bottom: 0
 		width: 100%
-		padding: 10px
 		box-sizing: border-box
 		color: $color-text-l
 		font-size: $font-size-medium
@@ -165,6 +164,8 @@ export default {
 		.list-header
 			height: 40px
 			line-height: 40px
+			padding: 5px 15px
+			border-bottom: 1px solid $color-background
 			.title
 				display: flex
 				align-items: center
@@ -183,6 +184,7 @@ export default {
 			width: 100%
 			overflow: hidden
 			max-height: 240px
+			box-sizing: border-box
 			.item
 				display: flex
 				align-items: center
