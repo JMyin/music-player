@@ -2,15 +2,18 @@
 * @Author: JMyin
 * @Date:   2017-07-11 10:58:49
 * @Last Modified by:   JMyin
-* @Last Modified time: 2017-07-15 21:25:23
+* @Last Modified time: 2017-07-16 16:07:43
 */
 import storage from 'good-storage'
+// 搜索词相关
 const SEARCH_KEY = '__search__'
 const SEARCH_MAX_LENGTH = 15
 // 播放记录信息  最多保存200个最近播放歌曲
 const PLAY_KEY = '__play__'
 const PLAY_MAX_LENGTH = 200
-
+// 收藏歌曲的key及最大长度
+const FAVORITE_KEY = '__favorite__'
+const FAVORITE_MAX_LENGTH = 200
 // 存储搜索值
 export function saveSearch(query) {
 	// 首先获取当前的存储情况，如果没有 就设置为一个空数组
@@ -79,4 +82,26 @@ export function savePlay(song) {
 // 读取缓存中的历史歌曲数据
 export function loadPlay() {
 	return storage.get(PLAY_KEY, [])
+}
+// 保存收藏的歌曲，并返回新的收藏歌曲列表
+export function saveFavorite(song) {
+	let songs = storage.get(FAVORITE_KEY, [])
+	insertArray(songs, song, (item) => {
+		return song.id === item.id
+	}, FAVORITE_MAX_LENGTH)
+	storage.set(FAVORITE_KEY, songs)
+	return songs
+}
+// 取消收藏某个歌曲
+export function deleteFavorite(song) {
+	let songs = storage.get(FAVORITE_KEY, [])
+	deleteFromArray(songs, (item) => {
+		return item.id === song.id
+	})
+	storage.set(FAVORITE_KEY, songs)
+	return songs
+}
+// 获取收藏的歌曲数据
+export function loadFavorite() {
+	return storage.get(FAVORITE_KEY, [])
 }

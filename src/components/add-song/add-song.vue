@@ -114,7 +114,8 @@ export default {
 			this.$refs.topTip.show()
 		},
 		...mapActions([
-			'insertSong'
+			'insertSong',
+			'randomPlay'
 		])
 	},
 	components: {
