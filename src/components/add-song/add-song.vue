@@ -114,8 +114,7 @@ export default {
 			this.$refs.topTip.show()
 		},
 		...mapActions([
-			'insertSong',
-			'randomPlay'
+			'insertSong'
 		])
 	},
 	components: {
@@ -159,8 +158,14 @@ export default {
 	.shortcut
 		position: relative
 	.list-wrapper
+		position: absolute
+		top: 150px
+		bottom: 0
+		left: 0
+		right: 0
+		width: 100%
 		padding: 0 30px
-		.inner-list
+		.list-scroll
 			height: 100%
 			overflow: hidden
 	.search-result

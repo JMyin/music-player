@@ -86,7 +86,7 @@
 		</div>
 	</transition>
 	<play-list ref="playlist"></play-list>
-	<audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error" @timeupdate="updateTime" @ended="end"></audio>
+	<audio ref="audio" :src="currentSong.url" @play="ready" @error="error" @timeupdate="updateTime" @ended="end"></audio>
 	</div>
 </template>
 
@@ -338,6 +338,10 @@ export default {
 		// 获取歌词
 		getLyric() {
 			this.currentSong.getLyric().then((lyric) => {
+				// 保证切换歌曲的时候歌词不会乱
+				if (this.currentSong.lyric !== lyric) {
+					return
+				}
 				this.currentLyric = new Lyric(lyric, this.handleLyric)
 				// 如果歌曲正在播放，设置歌词随之相应'播放'
 				if (this.playing) {
@@ -448,11 +452,13 @@ export default {
 				this.playingLyric = ''
 				this.currentLineNum = 0
 			}
+			// 在短时间内 无论currentSong切换多少次 只执行最后一次的setTimeout
 			clearTimeout(this.timer)
 			this.timer = setTimeout(() => {
 				this.$refs.audio.play()
 				this.getLyric()
 			}, 1000)
+			// 当歌曲在手机上播放，运行在后台 再切换到前台的时候 为了让play能够执行 有个1s的延迟 也可以防止快速切换歌曲
 		},
 		playing(newPlaying) {
 			const audio = this.$refs.audio

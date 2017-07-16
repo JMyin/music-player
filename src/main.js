@@ -9,6 +9,8 @@ import VueLazyLoad from 'vue-lazyload'
 import store from './store'
 
 import 'common/stylus/index.styl'
+/* eslint-disable no-unused-vars */
+// import vConsole from 'vconsole'
 
 Vue.config.productionTip = false
 // body 下所有div的地啊你都不会有300ms的延时

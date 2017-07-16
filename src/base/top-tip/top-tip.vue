@@ -48,6 +48,8 @@ export default {
 	top: 0
 	width: 100%
 	z-index: 500
+	text-align: center
+	color: $color-theme
 	background: $color-dialog-background
 	&.drop-enter-active, &.drop-leave-active
 		transition: all .3s
